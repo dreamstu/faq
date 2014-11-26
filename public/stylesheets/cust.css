@@ -1,0 +1,42 @@
+.navbar-right{
+    height: 50px;
+    line-height: 20px;
+    padding: 15px;
+    color: #ffffff;
+}
+.navbar-right a{
+    color: #00ff00;
+}
+
+.navbar-right img{
+    height: 30px;
+    height: 30px;
+}
+
+.faq-footer {
+    border-top: 1px solid #e5e5e5;
+    color: #777;
+    margin-top: 100px;
+    padding-bottom: 40px;
+    padding-top: 40px;
+    text-align: center;
+}
+.faq-footer-links {
+    color: #999;
+    margin-top: 20px;
+    padding-left: 0;
+}
+.faq-footer-links li {
+    display: inline;
+    padding: 0 2px;
+}
+.faq-footer-links li:first-child {
+    padding-left: 0;
+}
+
+.carousel-inner .item{
+    height: 250px;
+}
+.banner-image{
+    width: 100%;
+}

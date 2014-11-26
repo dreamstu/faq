@@ -1,0 +1,26 @@
+{{!< layout}}
+{{#contentFor "body"}}
+    <form class="form-inline" action="/register" method="post">
+        <h3>注册</h3>
+        <div class="form-group">
+            <label class="sr-only" for="username">Username</label>
+            <input type="text" class="form-control" placeholder="Username" name="username" value="{{name}}" required="required">
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="email">Email</label>
+            <input type="text" class="form-control" placeholder="Email" name="email" value="{{email}}" required="required">
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="password">Password</label>
+            <input type="password" class="form-control" placeholder="Password" name="password" required="required">
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="repassword">RePassword</label>
+            <input type="password" class="form-control" placeholder="Password Confirm" name="repassword" required="required">
+        </div>
+        <button type="submit" class="btn btn-primary">
+            注册
+        </button>
+        <a href="/login" class="btn btn-default">有账号，去登录？</a>
+    </form>
+{{/contentFor}}

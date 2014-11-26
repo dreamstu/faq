@@ -1,0 +1,153 @@
+{{!< ../layout}}
+{{#contentFor "body"}}
+    <h1>FAQ</h1>
+    <ol class="breadcrumb">
+        <li class="active"><a href="/faq/list"><span class="glyphicon glyphicon-th-list"></span>列表</a></li>
+    </ol>
+    <form>
+        <div class="form-group">
+            <label for="title">标题</label>
+            <input type="text" class="form-control" id="title" required="required" value="{{faq.title}}"/>
+        </div>
+        <div class="form-group">
+            <label for="category">一级分类</label>
+            <select class="form-control" id="first" required="required">
+                <option value="">-请选择一级分类-</option>
+                {{#if categorys}}
+                    {{#each categorys}}
+                        {{#compare faq.category id }}
+                            <option value="{{id}}" selected="selected">{{name}}</option>
+                        {{else}}
+                            <option value="{{id}}">{{name}}</option>
+                        {{/compare}}
+                    {{/each}}
+                {{else}}
+                    <option value="0" selected="selected">root</option>
+                {{/if}}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="name">二级分类</label>
+            <select class="form-control" id="second" required="required">
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="name">三级分类</label>
+            <select name="root" class="form-control" id="category" required="required">
+            </select>
+        </div>
+
+        <!-- 加载编辑器的容器 -->
+        <script id="container" name="content" type="text/plain">
+        </script>
+        <textarea id="con" style="display: none;">{{faq.content}}</textarea>
+
+        <p>&nbsp;</p>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">{{#if faq}}更新{{else}}保存{{/if}}</button>
+            <a class="btn btn-default" href="/faq/list">返回列表</a>
+        </div>
+    </form>
+{{/contentFor}}
+
+{{#contentFor "js"}}
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="/ueditor/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="/ueditor/ueditor.all.js"></script>
+    <!-- 实例化编辑器 -->
+    <script type="text/javascript">
+        var $elements = [$('#first'),$('#second'),$('#category')];
+
+        {{#if faq.category}}
+        find({{faq.category}},3);
+
+        function find(id,level){
+            var $element = $elements[level-1];
+            $.get('/category/json/element/'+id,function(rst){
+                if(rst.code==0){
+                    var categorys = rst.categorys;
+                    if(categorys && categorys.length>0){
+                        $element.empty().append('<option value="">-请选择'+level+'级分类-</option>');
+                        $.each(categorys,function(idx,category){
+                            var $id = category.id;
+                            if($id==id){
+                                $element.append('<option value="'+$id+'" selected="selected">'+category.name+'</option>');
+                            }else{
+                                $element.append('<option value="'+$id+'">'+category.name+'</option>');
+                            }
+                        });
+                        if(level>1){
+                            find(categorys[0].pid,level-1,$elements[level-2]);
+                        }
+                    }else{
+                        $element.append('<option value="">--无分类数据--</option>');
+                    }
+                }else{
+                    alert(level+'级分类拉取失败！');
+                }
+            });
+        }
+        {{/if}}
+
+        var editor = UE.getEditor('container');
+
+        editor.ready(function() {
+            editor.setContent($('#con').val());
+        });
+
+        $('#first').on('change',function(){
+            var second = $elements[1];
+            var pid = $(this).find('option:selected').val();
+            if(pid==''){
+                second.empty();
+                return;
+            }
+            $.get('/category/json/pid/'+pid+'/lv/2',function(rst){
+                if(rst.code==0){
+                    second.empty();
+                    second.append('<option value="">-请选择二级分类-</option>');
+                    $.each(rst.categorys,function(idx,category){
+                        second.append('<option value="'+category.id+'">'+category.name+'</option>');
+                    });
+                }else{
+                    alert('错误。Orz '+rst.error);
+                }
+            });
+        });
+
+        $('#second').on('change',function(){
+            var three = $elements[2];
+            var pid = $(this).find('option:selected').val();
+            if(pid==''){
+                three.empty();
+                return;
+            }
+            $.get('/category/json/pid/'+pid+'/lv/3',function(rst){
+                if(rst.code==0){
+                    three.empty();
+                    $.each(rst.categorys,function(idx,category){
+                        three.append('<option value="'+category.id+'">'+category.name+'</option>');
+                    });
+                }else{
+                    alert('错误。Orz '+rst.error);
+                }
+            });
+        });
+
+        $('form').on('submit',function(){
+            var html = editor.getContent();
+            var category = ($('#category').find('option:selected').val()+'').trim();
+            var title = $('#title').val();
+            $.post('/faq/new',{id:'{{faq.id}}',title:title,content:html,category:category},function(rst){
+                alert(rst.msg);
+                if(rst.id){
+                    window.location.href='/faq/edit/'+rst.id;
+                }
+            });
+            return false;
+        });
+    </script>
+{{/contentFor}}

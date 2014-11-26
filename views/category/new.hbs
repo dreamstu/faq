@@ -1,0 +1,105 @@
+{{!< ../layout}}
+{{#contentFor "body"}}
+    <form action="/category/new" method="post">
+        <h3>新建一个分组</h3>
+        <div class="form-group">
+            <label for="name">分组名</label>
+            <input type="text" class="form-control" placeholder="分组名" name="name" value="{{name}}" required="required">
+        </div>
+
+        <div class="form-group">
+            <label for="name">一级父级</label>
+            <select name="pid" class="form-control" id="first">
+                <option value="0" selected="selected">--顶级目录--</option>
+                {{#if categorys}}
+                    {{#each categorys}}
+                        <option value="{{id}}">{{name}}</option>
+                    {{/each}}
+                {{/if}}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="name">二级父级</label>
+            <select class="form-control" id="second">
+                <option value="0">--顶级目录--</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="name">三级父级</label>
+            <ul id="three" class="well">
+            </ul>
+        </div>
+
+        <input id="root" name="root" type="hidden" value="1">
+
+        <p>&nbsp;</p>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="确认新建"/>
+            <a href="/" class="btn btn-default">返回首页</a>
+        </div>
+    </form>
+{{/contentFor}}
+
+{{#contentFor "js"}}
+    <script>
+        $(function(){
+           $('#first').on('change',function(){
+               var second = $('#second');
+               var pid = $(this).find('option:selected').val();
+               $.get('/category/json/pid/'+pid+'/lv/2',function(rst){
+                   if(rst.code==0){
+                       second.empty();
+                       second.append('<option value="">--不选--</option>');
+                       $.each(rst.categorys,function(idx,category){
+                           second.append('<option value="'+category.id+'">'+category.name+'</option>');
+                       });
+                   }else{
+                       alert('错误。Orz '+rst.error);
+                   }
+               });
+           });
+
+           $('#second').on('change',function(){
+               var three = $('#three');
+               var pid = $(this).find('option:selected').val();
+               if(pid==''){
+                   three.empty();
+                   return;
+               }
+               $.get('/category/json/pid/'+pid+'/lv/3',function(rst){
+                   if(rst.code==0){
+                       three.empty();
+                       $.each(rst.categorys,function(idx,category){
+                           three.append('<li value="'+category.id+'">'+category.name+'</li>');
+                       });
+                   }else{
+                       alert('错误。Orz '+rst.error);
+                   }
+               });
+           });
+
+           $('form').on('submit',function(){
+               var first = $('#first');
+               var second = $('#second');
+               var root = $('#root');
+               var first_val = first.find('option:selected').val();
+               var second_val = (second.find('option:selected').val()+'').trim();
+               if((first_val==0 && second_val==0) || (first_val==0 && second_val=='')){
+                   second.attr('name','');
+                   first.attr('name','pid');
+                   root.val(1);
+               }else if(first_val!=0 && second_val==''){
+                   second.attr('name','');
+                   first.attr('name','pid');
+                   root.val(2);
+               }else{
+                   first.attr('name','');
+                   second.attr('name','pid');
+                   root.val(3);
+               }
+           });
+        });
+    </script>
+{{/contentFor}}

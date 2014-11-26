@@ -1,0 +1,19 @@
+{{!< layout}}
+{{#contentFor "body"}}
+    <h1>{{faq.title}}</h1>
+    <article id="content">
+        {{{faq.content}}}
+    </article>
+
+    <p>作者：{{faq.author}} | 时间：{{{faq.time}}} | 状态：{{faq.state}}</p>
+
+{{/contentFor}}
+
+{{#contentFor "js"}}
+<script src="/ueditor/ueditor.parse.min.js"></script>
+<script>
+    uParse('#content',{
+        rootPath:'/ueditor/'
+    });
+</script>
+{{/contentFor}}

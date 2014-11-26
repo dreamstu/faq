@@ -1,0 +1,22 @@
+{{!< layout}}
+{{#contentFor "body"}}
+    {{#compare faqs.length 0 }}
+        <div>没有条目。</div>
+    {{else}}
+        <ul>
+        {{#each faqs}}
+            <li><a href="/faq/api/view/detail/{{id}}" data-id="{{id}}" class="faq-item">{{title}}</a></li>
+        {{/each}}
+        </ul>
+    {{/compare}}
+{{/contentFor}}
+
+{{#contentFor "js"}}
+    <script>
+        $(function(){
+            $('.faq-item').on('click',function(){
+                window.parent.window.addbreadcrumb($(this).text());
+            });
+        });
+    </script>
+{{/contentFor}}

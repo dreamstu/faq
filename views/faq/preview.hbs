@@ -1,0 +1,50 @@
+{{!< ../layout}}
+{{#contentFor "body"}}
+    <ol class="breadcrumb">
+        <li class="active"><a href="/faq/list">返回列表</a></li>
+    </ol>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h1>{{faq.title}}</h1>
+            <article id="content">
+                {{{faq.content}}}
+            </article>
+
+            <p></p>
+            <p>作者：{{faq.author}}</p>
+            <p>时间：{{{faq.time}}}</p>
+            <p>状态：
+                {{#compare faq.state 0}}
+                    <span class="label label-success">正常</span>
+                {{/compare}}
+                {{#compare faq.state 1}}
+                    <span class="label label-danger">禁用</span>
+                {{/compare}}
+
+            </p>
+        </div>
+    </div>
+
+    <p>
+        FAQ操作：
+        <a class="label label-info" href="{{remoteUrl}}/faq/index.html?id={{faq.id}}&category={{faq.category}}" target="_blank">在“{{remoteName}}”中预览</a>
+        <a class="label label-warning" href="/faq/edit/{{faq.id}}">编辑</a>
+        <a class="label label-danger" href="/faq/delete/{{faq.id}}">删除</a>
+    </p>
+
+    <p>
+        “{{remoteName}}”外链地址：
+        <input type="text" class="form-control" value="{{remoteUrl}}/faq/index.html?id={{faq.id}}&category={{faq.category}}" />
+    </p>
+
+{{/contentFor}}
+
+{{# contentFor "js"}}
+    <script src="/ueditor/ueditor.parse.min.js"></script>
+    <script>
+        uParse('#content',{
+            rootPath:'/ueditor/'
+        });
+    </script>
+{{/contentFor}}
