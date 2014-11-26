@@ -18,7 +18,9 @@ router.use('/ueditor',ueditor(seetings.upload.image_path+'/', function(req, res,
         // 下面填写你要把图片保存到的路径 （ 以 $path 作为根路径）
         var ext = (foo.filename).substring((foo.filename).lastIndexOf('.'),(foo.filename).length);
         var name = (foo.filename).substring(0,(foo.filename).lastIndexOf('.'));
-        var img_url = commUtils.translate.str2py_(name)+ext;
+        var now = new Date();
+        var timestamp = '_'+[now.getFullYear(), now.getMonth()+1, now.getDate(), now.getHours(),now.getMinutes(),now.getSeconds()].join('');
+        var img_url = commUtils.translate.str2py_(name)+timestamp+ext;
         res.ue_up(img_url); //你只要输入要保存的地址 。保存操作交给ueditor来做
     }//  客户端发起图片列表请求
     else if (req.query.action === 'listimage'){
