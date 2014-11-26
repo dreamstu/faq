@@ -189,10 +189,10 @@ router.route('/delete/:id').all(function(req,res){
     $faq.delete({id:id},function(err){
         if(err){
             req.flash('error','抱歉，删除失败！');
-            res.redirect('/list/faq');
+            res.redirect('/faq/list');
         }else{
             req.flash('success','已删除！');
-            res.redirect('/list/faq');
+            res.redirect('/faq/list');
         }
     });
 });
